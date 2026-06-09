@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 const DEFAULT_STORES = [
   { id: "muji", name: "無印良品", emoji: "🏷️", color: "#8b7355" },
