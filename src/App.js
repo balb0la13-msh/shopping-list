@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const DEFAULT_STORES = [
   { id: "muji", name: "無印良品", emoji: "🏷️", color: "#8b7355" },
@@ -68,13 +68,21 @@ function getDaysUntil(dateStr) {
 }
 
 export default function App() {
-  const [items, setItems] = useState([]);
-  const [stores, setStores] = useState(DEFAULT_STORES);
+  const [items, setItems] = useState(() => {const saved = localStorage.getItem("shopping-items");
+  return saved ? JSON.parse(saved) : [];
+});
+  const [stores, setStores] = useState(() => {
+  const saved = localStorage.getItem("shopping-stores");
+  return saved ? JSON.parse(saved) : DEFAULT_STORES;
+});
   const [activeTab, setActiveTab] = useState("all");
   const [loading, setLoading] = useState(false);
   const [loadingUrl, setLoadingUrl] = useState(false);
   const [showStoreManager, setShowStoreManager] = useState(false);
-  const [checkedItems, setCheckedItems] = useState({});
+  const [checkedItems, setCheckedItems] = useState(() => {
+  const saved = localStorage.getItem("shopping-checked");
+  return saved ? JSON.parse(saved) : {};
+});
   const [editingStoreId, setEditingStoreId] = useState(null);
   const [editingName, setEditingName] = useState("");
   const [editingEmoji, setEditingEmoji] = useState("");
@@ -89,6 +97,17 @@ export default function App() {
   const [expandedItem, setExpandedItem] = useState(null);
   const [bannerDismissed, setBannerDismissed] = useState({});
   const inputRef = useRef(null);
+  useEffect(() => {
+  localStorage.setItem("shopping-items", JSON.stringify(items));
+}, [items]);
+
+useEffect(() => {
+  localStorage.setItem("shopping-stores", JSON.stringify(stores));
+}, [stores]);
+
+useEffect(() => {
+  localStorage.setItem("shopping-checked", JSON.stringify(checkedItems));
+}, [checkedItems]);
 
   // 期限バナーチェック
   const urgentItems = items.filter((item) => {
